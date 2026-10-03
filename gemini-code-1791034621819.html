@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BamboWorld — Правила Сервера Minecraft</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: rgba(20, 27, 45, 0.75);
+      --bg-card-border: rgba(46, 204, 113, 0.2);
+      --accent: #2ecc71;
+      --accent-hover: #27ae60;
+      --accent-glow: rgba(46, 204, 113, 0.4);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    header {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--bg-card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 15px 30px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .lang-switcher {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 3px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .ip-badge {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent);
+      transition: all 0.2s ease;
+    }
+
+    .ip-badge:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 50px 20px 30px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* Search Box */
+    .search-box {
+      max-width: 600px;
+      margin: 25px auto 0;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 16px 20px 16px 50px;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 30px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    /* Rules Main Container */
+    .rules-container {
+      max-width: 1000px;
+      margin: 30px auto 60px;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .category-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      margin-bottom: 25px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .category-header {
+      padding: 20px 25px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+    }
+
+    .category-header i {
+      font-size: 24px;
+      color: var(--accent);
+    }
+
+    .category-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      flex-grow: 1;
+    }
+
+    .rule-item {
+      padding: 20px 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .rule-item:last-child {
+      border-bottom: none;
+    }
+
+    .rule-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .rule-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .rule-num {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 16px;
+      min-width: 45px;
+    }
+
+    .rule-title {
+      font-weight: 700;
+      font-size: 16px;
+      flex-grow: 1;
+      color: #fff;
+    }
+
+    .rule-punishment {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .rule-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      padding-left: 45px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      background: rgba(11, 15, 25, 0.95);
+      border-top: 1px solid var(--bg-card-border);
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .discord-btn {
+      background: #5865F2;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+    }
+
+    .discord-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--accent);
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      box-shadow: 0 10px 25px var(--accent-glow);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 30px; }
+      .rule-top { flex-direction: column; gap: 5px; }
+      .rule-desc { padding-left: 0; }
+      .ip-badge span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+
+  <div class="wrapper">
+    <header>
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <i class="fa-solid fa-tree"></i> Bambo<span>World</span>
+        </a>
+        <div class="nav-controls">
+          <div class="ip-badge" onclick="copyIP()">
+            <i class="fa-solid fa-server"></i>
+            <span>tex.ravenhost.space:18510</span>
+          </div>
+          <div class="lang-switcher">
+            <button class="lang-btn active" id="btn-ua" onclick="setLang('ua')">UA</button>
+            <button class="lang-btn" id="btn-ru" onclick="setLang('ru')">RU</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1 id="hero-title">ПРАВИЛА СЕРВЕРА</h1>
+      <p id="hero-subtitle">Незнання правил не звільняє від відповідальності. Граючи на нашому сервері, ви автоматично погоджуєтеся з усіма пунктами.</p>
+      
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" onkeyup="filterRules()" placeholder="Пошук за правилами (наприклад: чити, мут, 1.2)...">
+      </div>
+    </section>
+
+    <main class="rules-container" id="rulesWrapper"></main>
+
+    <footer>
+      <div class="footer-content">
+        <a href="https://discord.gg/yBZRPWv4jM" target="_blank" class="discord-btn">
+          <i class="fa-brands fa-discord"></i> Приєднатися до Discord
+        </a>
+        <p style="color: var(--text-muted); font-size: 14px;">&copy; 2026 BamboWorld. Всі права захищено.</p>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">IP успішно скопійовано!</div>
+
+  <script>
+    const rulesData = {
+      ua: [
+        {
+          catTitle: "1. Загальні правила",
+          catIcon: "fa-shield-halved",
+          items: [
+            { num: "1.1", title: "Використання читів та ПЗ", desc: "Заборонено використання будь-яких сторонніх модифікацій, що надають перевагу у грі (X-Ray, KillAura, Fly тощо).", pun: "Бан 30 днів / Навжди" },
+            { num: "1.2", title: "Продаж за реальні гроші", desc: "Заборонено продаж або купівля ігрових ресурсів, акаунтів чи донату за реальні гроші поза офіційним сайтом.", pun: "Пермабан" },
+            { num: "1.3", title: "Мультиакаунти", desc: "Заборонено створення більше ніж 2 акаунтів для обходу блокування.", pun: "Бан всіх акаунтів" }
+          ]
+        },
+        {
+          catTitle: "2. Правила чату",
+          catIcon: "fa-comments",
+          items: [
+            { num: "2.1", title: "Спам та Флуд", desc: "Заборонено відправку однотипних повідомлень, капс та символьний флуд у чат.", pun: "Мут 30 - 120 хв" },
+            { num: "2.2", title: "Образи та мат", desc: "Заборонено надмірне використання нецензурної лексики, образи гравців та їхніх родичів.", pun: "Мут 2 - 24 години" },
+            { num: "2.3", title: "Реклама сторонніх ресурсів", desc: "Заборонено рекламу інших серверів Minecraft, YouTube/TikTok каналів без медичного статусу.", pun: "Бан 7 днів" }
+          ]
+        },
+        {
+          catTitle: "3. Ігровий процес",
+          catIcon: "fa-gamepad",
+          items: [
+            { num: "3.1", title: "Гриферство", desc: "Заборонено руйнувати чужі будівлі, якщо вони знаходяться в приватній території або поряд з нею.", pun: "Бан 3 - 14 днів" },
+            { num: "3.2", title: "Обман при торгівлі", desc: "Заборонено обманювати гравців під час обміну ресурсами або ігровою валютою.", pun: "Бан 5 днів + вилучення" },
+            { num: "3.3", title: "Лаг-машини", desc: "Заборонено створення механізмів, які навмисно викликають падіння FPS або TPS сервера.", pun: "Знесення + Бан 14 днів" }
+          ]
+        },
+        {
+          catTitle: "4. Правила для Донатерів",
+          catIcon: "fa-crown",
+          items: [
+            { num: "4.1", title: "Зловживання командами", desc: "Заборонено використовувати донат-команди (/kick, /mute, /ban) без обґрунтованої причини.", pun: "Снятие доната / Бан" },
+            { num: "4.2", title: "Передача права донату", desc: "Заборонено роздавати ресурси з /creative або /heal під час PvP дій.", pun: "Попередження / Позбавлення прав" }
+          ]
+        }
+      ],
+      ru: [
+        {
+          catTitle: "1. Общие правила",
+          catIcon: "fa-shield-halved",
+          items: [
+            { num: "1.1", title: "Использование читов и ПО", desc: "Запрещено использование любых сторонних модификаций, дающих преимущество в игре (X-Ray, KillAura, Fly и т.д.).", pun: "Бан 30 дней / Навсегда" },
+            { num: "1.2", title: "Продажа за реальные деньги", desc: "Запрещена продажа или покупка игровых ресурсов, аккаунтов или доната за реальные деньги вне официального сайта.", pun: "Пермабан" },
+            { num: "1.3", title: "Мультиаккаунты", desc: "Запрещено создание более 2 аккаунтов для обхода блокировки.", pun: "Бан всех аккаунтов" }
+          ]
+        },
+        {
+          catTitle: "2. Правила чата",
+          catIcon: "fa-comments",
+          items: [
+            { num: "2.1", title: "Спам и Флуд", desc: "Запрещена отправка однотипных сообщений, капс и символьный флуд в чат.", pun: "Мут 30 - 120 мин" },
+            { num: "2.2", title: "Оскорбления и мат", desc: "Запрещено чрезмерное использование нецензурной лексики, оскорбления игроков и их родственников.", pun: "Мут 2 - 24 часа" },
+            { num: "2.3", title: "Реклама сторонних ресурсов", desc: "Запрещена реклама других серверов Minecraft, YouTube/TikTok каналов без медиа-статуса.", pun: "Бан 7 дней" }
+          ]
+        },
+        {
+          catTitle: "3. Игровой процесс",
+          catIcon: "fa-gamepad",
+          items: [
+            { num: "3.1", title: "Гриферство", desc: "Запрещено разрушать чужие постройки, если они находятся в привате или рядом с ним.", pun: "Бан 3 - 14 дней" },
+            { num: "3.2", title: "Обман при торговле", desc: "Запрещено обманывать игроков при обмене ресурсами или игровой валютой.", pun: "Бан 5 дней + изъятие" },
+            { num: "3.3", title: "Лаг-машины", desc: "Запрещено создание механизмов, намеренно вызывающих просадку FPS или TPS сервера.", pun: "Снос + Бан 14 дней" }
+          ]
+        },
+        {
+          catTitle: "4. Правила для Донатеров",
+          catIcon: "fa-crown",
+          items: [
+            { num: "4.1", title: "Злоупотребление командами", desc: "Запрещено использовать донат-команды (/kick, /mute, /ban) без обоснованной причины.", pun: "Снятие доната / Бан" },
+            { num: "4.2", title: "Передача прав доната", desc: "Запрещено раздавать ресурсы из /creative или /heal во время PvP сражений.", pun: "Предупреждение / Лишение прав" }
+          ]
+        }
+      ]
+    };
+
+    let currentLang = 'ua';
+
+    function renderRules() {
+      const container = document.getElementById('rulesWrapper');
+      container.innerHTML = '';
+
+      rulesData[currentLang].forEach(cat => {
+        const catCard = document.createElement('div');
+        catCard.className = 'category-card';
+
+        let itemsHTML = '';
+        cat.items.forEach(item => {
+          itemsHTML += `
+            <div class="rule-item">
+              <div class="rule-top">
+                <span class="rule-num">${item.num}</span>
+                <span class="rule-title">${item.title}</span>
+                <span class="rule-punishment">${item.pun}</span>
+              </div>
+              <div class="rule-desc">${item.desc}</div>
+            </div>
+          `;
+        });
+
+        catCard.innerHTML = `
+          <div class="category-header">
+            <i class="fa-solid ${cat.catIcon}"></i>
+            <h2>${cat.catTitle}</h2>
+          </div>
+          <div class="category-body">
+            ${itemsHTML}
+          </div>
+        `;
+
+        container.appendChild(catCard);
+      });
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.getElementById('btn-ua').classList.toggle('active', lang === 'ua');
+      document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+
+      if (lang === 'ua') {
+        document.getElementById('hero-title').innerText = "ПРАВИЛА СЕРВЕРА";
+        document.getElementById('hero-subtitle').innerText = "Незнання правил не звільняє від відповідальності. Граючи на нашому сервері, ви автоматично погоджуєтеся з усіма пунктами.";
+        document.getElementById('searchInput').placeholder = "Пошук за правилами (наприклад: чити, мут, 1.2)...";
+      } else {
+        document.getElementById('hero-title').innerText = "ПРАВИЛА СЕРВЕРА";
+        document.getElementById('hero-subtitle').innerText = "Незнание правил не освобождает от ответственности. Играя на нашем сервере, вы автоматически соглашаетесь со всеми пунктами.";
+        document.getElementById('searchInput').placeholder = "Поиск по правилам (например: читы, мут, 1.2)...";
+      }
+
+      renderRules();
+    }
+
+    function filterRules() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const ruleItems = document.querySelectorAll('.rule-item');
+
+      ruleItems.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function copyIP() {
+      navigator.clipboard.writeText("tex.ravenhost.space:18510");
+      const toast = document.getElementById('toast');
+      toast.innerText = currentLang === 'ua' ? "IP успішно скопійовано!" : "IP успешно скопирован!";
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Background Canvas Particles
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.alpha = Math.random() * 0.5 + 0.2;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+      }
+      draw() {
+        ctx.fillStyle = `rgba(46, 204, 113, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Initial Render
+    renderRules();
+  </script>
+</body>
+</html>
